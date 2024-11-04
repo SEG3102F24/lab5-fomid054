@@ -31,14 +31,34 @@ export class EmployeeComponent {
   get gender(): AbstractControl<string> {return <AbstractControl<string>>this.employeeForm.get('gender'); }
   get email(): AbstractControl<string> {return <AbstractControl<string>>this.employeeForm.get('email'); }
 
-  onSubmit() {
-    const employee: Employee = new Employee(this.name.value,
+  async onSubmit() {
+    // Create an Employee object with proper typing
+    const employee: Employee = new Employee(
+      this.name.value,
       new Date(this.dateOfBirth.value),
       this.city.value,
       this.salary.value,
       this.gender.value,
-      this.email.value);
-    this.employeeService.addEmployee(employee);
+      this.email.value
+    );
+
+    // Convert Employee object to a plain JavaScript object suitable for Firestore
+    const employeePlainObject = {
+      name: employee.name,
+      dateOfBirth: employee.dateOfBirth.toISOString(), // Convert Date to ISO string for storage
+      city: employee.city,
+      salary: employee.salary,
+      gender: employee.gender,
+      email: employee.email
+    };
+
+    // Add the employee to Firestore
+    const success = await this.employeeService.addEmployee(employeePlainObject);
+    if (success) {
+      console.log('Employee successfully added to Firestore and local state!');
+    } else {
+      console.error('Failed to add employee.');
+    }
     this.employeeForm.reset();
     this.router.navigate(['/employees']).then(() => {});
   }

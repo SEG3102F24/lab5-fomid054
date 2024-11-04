@@ -12,7 +12,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let emp of employees.$ | async">
+    <tr *ngFor="let emp of employeeService.$ | async">
       <td>{{emp.name}}</td>
       <td>{{emp.dateOfBirth | date :'d/MMM/y'}}</td>
       <td>{{emp.city}}</td>
